@@ -1,0 +1,195 @@
+<view>
+   <view wx:for="{{shipin}}" wx:key="*this">
+      <video id="myVideo" src="{{item.ship}}" 
+      binderror="videoErrorCallback" enable-danmu danmu-btn controls></video>
+
+      <view>
+         <view>
+            <view>
+               <input bindblur="bindInputBlur" type="text" placeholder="请输入弹幕"/>
+            </view>
+            <view>
+               <button bindtap="bindSendDanmu" type="primary" formType="submit">发送</button>
+            </view>
+         </view>
+      </view>
+   </view>
+</view>
+
+
+<view catchtap="onUpTap">
+   <image src="/images/dianzan1.png"></image>
+   <text>点赞数量</text>
+</view>
+<view catchtap="onCommentTap">
+   <image src="/images/pinglun.png"></image>
+   <text>评论数量{{comments.length}}</text>
+</view>
+<view catchtap="onCollectionTap">
+   <image src="/images/shoucang1.png"></image>
+   <text>收藏数量</text>
+</view>
+<view hidden="{{!chakancomments}}">
+<view hidden="{{oneComment}}">
+   <view class="comment-detail-box">
+     <view class="comment-main-box">
+       <view class="comment-title">（共{{comments.length}}条评论）</view>
+       <block wx:for="{{comments}}" wx:key="*this" wx:for-item="item" wx:for-index="idx">
+          <view class="comment-item" catchtap="oneComment" data-comment-idx="{{idx}}">
+             <view class="comment-item-header">
+                <view class="left-img">
+                   <image src="{{item.avatar}}"></image>
+                </view>
+                <view class="right-user">
+                   <text class="user-name">{{item.username}}</text>
+                </view>
+             </view>
+             <view class="comment-body">
+                <view class="comment-txt" wx:if="{{item.content.txt}}">
+                   <text>{{item.content.txt}}</text>
+                </view>
+                <view class="comment-voice" wx:if="{{item.content.audio && item.content.audio.url}}">
+                    <view data-url="{{item.content.audio.url}}" class="comment-voice-item" catchtap="playAudio">
+                        <image src="/images/wx_app_voice.png" class="voice-play"></image>
+                        <text>{{item.content.audio.timeLen}}''</text>
+                    </view>
+                </view>
+                <view class="comment-img" wx:if="{{item.content.img.length!=0}}">
+                   <block wx:for="{{item.content.img}}" wx:key="*this" wx:for-item="img" wx:for-index="imgIdx">
+                      <image src="{{img}}" mode="aspectFill" catchtap="previewImg" data-comment-idx="{{idx}}" data-img-idx="{{imgIdx}}"></image>
+                   </block>
+                </view>
+             </view>
+             <view class="comment-time">{{item.create_time}}</view>
+          </view>
+       </block>
+     </view>
+   </view>
+   <view class="input-box">
+    <view class="send-msg-box">
+      <view hidden="{{useKeyboardFlag}}" class="input-item">
+        <image src="/images/shuru2.png" class="comment-icon keyboard-icon" catchtap="switchInputType"></image>
+        <input class="input speak-input {{recodingClass}}" value="按住 录语音" disabled="disabled" catchtouchstart="recordStart" catchtouchend="recordEnd" />
+      </view>
+      <view hidden="{{!useKeyboardFlag}}" class="input-item">
+        <image class="comment-icon speak-icon" src="/images/shuru1.png" catchtap="switchInputType"></image>
+        <input class="input keyboard-input"  value="{{keyboardInputValue}}" bindconfirm="submitComment" bindinput="bindCommentInput" placeholder="写下我的评论……" />
+      </view>
+      <image class="comment-icon add-icon" src="/images/tianjia.png" catchtap="sendMoreMsg"></image>
+      <view class="submit-btn">
+         <button 
+            type="primary"
+            plain="true"
+            open-type="getUserInfo"
+            bindgetuserinfo="submitComment"
+         >发送</button>
+      </view>
+    </view>
+    <view class="send-more-box" hidden="{{!sendMoreMsgFlag}}">
+
+      <!--选择图片和拍照的按钮-->
+      <view class="send-more-btns-main">
+        <view class="more-btn-item" catchtap="chooseImage" data-category="album">
+          <view class="more-btn-main">
+            <image src="/images/wx_app_upload_image.png"></image>
+          </view>
+          <text>照片</text>
+        </view>
+        <view class="more-btn-item" catchtap="chooseImage" data-category="camera">
+          <view class="more-btn-main">
+            <image src="/images/wx_app_camera.png"></image>
+          </view>
+          <text>拍照</text>
+        </view>
+      </view>
+
+      <!--显示选择的图片-->
+      <view class="send-more-result-main" hidden="{{chooseFiles.length==0}}">
+        <block wx:for="{{chooseFiles}}" wx:for-index="idx">
+
+          <!--如果删除其中一个，则对其添加deleting 样式；-->
+          <view class="file-box {{deleteIndex==idx?'deleting':''}}">
+            <view class="img-box">
+              <image src="{{item}}" mode="aspectFill"></image>
+              <icon class="remove-icon" type="cancel" size="23" color="#B2B2B2" catchtap="deleteImage" data-idx="{{idx}}" />
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>  
+   </view>
+</view>
+<view hidden="{{!oneComment}}">
+   <text>评论详情</text>
+   <view catchtap="backAllComments">
+      <text>返回all评论</text>
+   </view>
+   <view>
+             <view class="comment-item-header">
+                <view class="left-img">
+                   <image src="{{comment.avatar}}"></image>
+                </view>
+                <view class="right-user">
+                   <text class="user-name">{{comment.username}}</text>
+                </view>
+             </view>
+             <view class="comment-body">
+                <view class="comment-txt" wx:if="{{comment.content.txt}}">
+                   <text>{{comment.content.txt}}</text>
+                </view>
+                <view class="comment-voice" wx:if="{{comment.content.audio && comment.content.audio.url}}">
+                    <view data-url="{{comment.content.audio.url}}" class="comment-voice-item" catchtap="playAudio">
+                        <image src="/images/wx_app_voice.png" class="voice-play"></image>
+                        <text>{{comment.content.audio.timeLen}}''</text>
+                    </view>
+                </view>
+                <view class="comment-img" wx:if="{{comment.content.img.length!=0}}">
+                   <block wx:for="{{comment.content.img}}" wx:key="*this" wx:for-item="img" wx:for-index="imgIdx">
+                      <image src="{{img}}" mode="aspectFill" catchtap="onePreviewImg" data-img-idx="{{imgIdx}}"></image>
+                   </block>
+                </view>
+             </view>
+             <view class="comment-time">{{comment.create_time}}</view>
+   </view>
+     <view class="comment-main-box">
+       <view class="comment-title">（共{{twice.length}}条二次评论）</view>
+       <block wx:for="{{twice}}" wx:key="*this" wx:for-item="item" wx:for-index="idx">
+          <view>
+             <text>{{twice[idx].username}}回复{{comment.username}}</text>
+          </view>
+          <view class="comment-item">
+             <view class="comment-item-header">
+                <view class="left-img">
+                   <image src="{{item.avatar}}"></image>
+                </view>
+                <view class="right-user">
+                   <text class="user-name">{{item.username}}</text>
+                </view>
+             </view>
+             <view class="comment-body">
+                <view class="comment-txt" wx:if="{{item.content.txt}}">
+                   <text>{{item.content.txt}}</text>
+                </view>
+                <view class="comment-voice" wx:if="{{item.content.audio && item.content.audio.url}}">
+                    <view data-url="{{item.content.audio.url}}" class="comment-voice-item" catchtap="playAudio">
+                        <image src="/images/wx_app_voice.png" class="voice-play"></image>
+                        <text>{{item.content.audio.timeLen}}''</text>
+                    </view>
+                </view>
+                <view class="comment-img" wx:if="{{item.content.img.length!=0}}">
+                   <block wx:for="{{item.content.img}}" wx:key="*this" wx:for-item="img" wx:for-index="imgIdx">
+                      <image src="{{img}}" mode="aspectFill" catchtap="twicePreviewImg" data-twice-idx="{{idx}}" data-img-idx="{{imgIdx}}"></image>
+                   </block>
+                </view>
+             </view>
+             <view class="comment-time">{{item.create_time}}</view>
+          </view>
+       </block>
+     </view>  
+</view>
+</view>
+<view hidden="{{chakancomments}}">
+   <text>相关内容</text>
+</view>
+
+

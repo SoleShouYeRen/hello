@@ -1,0 +1,3 @@
+<view class="list-item" bindtap="testCgi">
+      <text class="request-text">{{openid}}</text>
+    </view>

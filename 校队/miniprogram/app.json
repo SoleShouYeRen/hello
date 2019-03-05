@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/shouye/shouye",
+    "pages/zhibo/zhibo",
+    "pages/xinxi/xinxi",
+    "pages/shipindetail/shipindetail"
+   
+  ],
+
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "校园大小事",
+    "navigationBarTextStyle": "black"
+  },
+
+  "tabBar":{
+    "borderStyle":"white",
+    "selectedColor":"#4A6141",
+    "color":"#333",
+    "backgroundColor":"#fff",
+    "position":"bottom",
+    "list":[
+      {
+        "pagePath":"pages/shouye/shouye",
+        "text":"首页",
+        "iconPath":"images/wx_app_movie.png",
+        "selectedIconPath":"images/wx_app_music_start.png"
+      },
+
+      {
+        "pagePath": "pages/zhibo/zhibo",
+        "text": "赛事直播",
+        "iconPath": "images/wx_app_news.png",
+        "selectedIconPath": "images/wx_app_music_stop.png"
+      }
+    ]
+  }
+}

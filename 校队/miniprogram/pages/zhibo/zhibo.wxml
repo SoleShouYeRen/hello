@@ -1,0 +1,3 @@
+<view>
+      <button class="userinfo-nickname" bindtap="onGetOpenid">点击获取 openid</button>
+      </view>
